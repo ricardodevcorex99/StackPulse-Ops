@@ -29,6 +29,7 @@
         .glow-emerald { box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.2); }
         .glow-blue { box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.2); }
         .glow-purple { box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.2); }
+        .glow-indigo { box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.25); }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0b0f19; }
         ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
@@ -88,21 +89,26 @@
                         <span class="text-xs font-semibold text-white">Servicios Vinculados:</span>
                         <span id="badge-mongo-user" class="px-2 py-0.5 rounded bg-emerald-950/80 font-mono text-[11px] text-emerald-300 border border-emerald-800/60">🍃 Mongo: Conectando...</span>
                         <span id="badge-storage-user" class="px-2 py-0.5 rounded bg-amber-950/80 font-mono text-[11px] text-amber-300 border border-amber-800/60">☁️ Storage: Conectando...</span>
+                        <span id="badge-cloud-user" class="px-2 py-0.5 rounded bg-indigo-950/80 font-mono text-[11px] text-indigo-300 border border-indigo-800/60">🚀 Cloud: Conectando...</span>
                     </div>
-                    <p class="text-xs text-gray-400 mt-1">Monitoreo y exploración directa de base de datos, almacenamiento de objetos, microservicios y app web.</p>
+                    <p class="text-xs text-gray-400 mt-1">Monitoreo y exploración directa de base de datos, almacenamiento de objetos, microservicios, app local y hosting cloud.</p>
                 </div>
             </div>
 
             <div class="flex items-center space-x-2 self-end md:self-center">
                 <a id="btn-web-app" href="http://localhost:8000" target="_blank" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center space-x-1.5 shadow-sm">
-                    <span>Abrir App Local</span>
+                    <span>App Local</span>
                     <span class="material-symbols-outlined text-xs">open_in_new</span>
+                </a>
+                <a id="btn-cloud-app" href="https://miveci-app.onrender.com" target="_blank" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center space-x-1.5 shadow-sm">
+                    <span>Cloud en Vivo</span>
+                    <span class="material-symbols-outlined text-xs">rocket_launch</span>
                 </a>
             </div>
         </div>
 
-        <!-- KPI 4 Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- KPI 5 Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             
             <!-- Card 1: MongoDB Atlas -->
             <div class="p-5 rounded-2xl bg-[#0f172a]/70 border border-gray-800 hover:border-emerald-500/50 transition-all glow-emerald flex flex-col justify-between group">
@@ -273,6 +279,55 @@
                         <span>Abrir Aplicación</span>
                         <span class="material-symbols-outlined text-xs">open_in_new</span>
                     </a>
+                </div>
+            </div>
+
+            <!-- Card 5: Cloud Hosting (Render / Production) -->
+            <div class="p-5 rounded-2xl bg-[#0f172a]/70 border border-gray-800 hover:border-indigo-500/50 transition-all glow-indigo flex flex-col justify-between group">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="text-xs font-mono uppercase tracking-wider text-gray-400">Cloud Hosting</span>
+                            <span id="cloud-badge" class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">ONLINE</span>
+                        </div>
+                        <a id="cloud-link-title" href="https://miveci-app.onrender.com" target="_blank" class="text-lg font-bold text-white mt-1 hover:text-indigo-400 transition flex items-center space-x-1">
+                            <span id="cloud-name">Render Cloud</span>
+                            <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100 transition">open_in_new</span>
+                        </a>
+                    </div>
+                    <a id="cloud-link-icon" href="https://dashboard.render.com" target="_blank" class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center hover:bg-indigo-500/20 transition">
+                        <span class="material-symbols-outlined text-xl">cloud_done</span>
+                    </a>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-gray-800/80 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400">Cuenta Cloud:</span>
+                        <span class="font-mono text-indigo-300 text-[11px]" id="cloud-user">davidbetancourt2499</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400">Región / Runtime:</span>
+                        <span class="font-mono text-gray-200 text-[11px]" id="cloud-region">Oregon (Docker PHP 8.4)</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400">Latencia Web:</span>
+                        <span class="font-mono text-emerald-400" id="cloud-latency">-- ms</span>
+                    </div>
+                    <div class="bg-gray-900/60 p-2 rounded-lg border border-gray-800/60 flex items-center justify-between text-xs">
+                        <span class="text-gray-400">Estado HTTP:</span>
+                        <span class="text-base font-bold text-emerald-400 font-mono" id="cloud-http-status">200 OK</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-1.5 pt-1">
+                        <a id="cloud-btn-open" href="https://miveci-app.onrender.com" target="_blank" class="py-1.5 px-2 rounded-lg bg-indigo-950/60 hover:bg-indigo-900/80 border border-indigo-800/50 text-indigo-300 text-xs font-medium flex items-center justify-center space-x-1 transition active:scale-95 shadow-sm">
+                            <span class="material-symbols-outlined text-xs">rocket_launch</span>
+                            <span>App en Vivo</span>
+                        </a>
+                        <a id="cloud-btn-dashboard" href="https://dashboard.render.com" target="_blank" class="py-1.5 px-2 rounded-lg bg-gray-800/80 hover:bg-gray-700 border border-gray-700 text-gray-200 text-xs font-medium flex items-center justify-center space-x-1 transition active:scale-95">
+                            <span>Consola</span>
+                            <span class="material-symbols-outlined text-xs">open_in_new</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -535,6 +590,55 @@
                         const el = document.getElementById(id);
                         if (el) el.href = w.url;
                     });
+                }
+
+                // Cloud Hosting
+                const cl = data.cloud_hosting;
+                if (cl) {
+                    const cBadgeUser = document.getElementById('badge-cloud-user');
+                    if (cBadgeUser) cBadgeUser.textContent = `🚀 Cloud: ${cl.account_user || 'Render'}`;
+
+                    const cUser = document.getElementById('cloud-user');
+                    if (cUser) cUser.textContent = cl.account_user ? cl.account_user.split('@')[0] : '--';
+
+                    const cName = document.getElementById('cloud-name');
+                    if (cName) cName.textContent = cl.name || 'Render Cloud';
+
+                    const cReg = document.getElementById('cloud-region');
+                    if (cReg) cReg.textContent = `${cl.region || 'Oregon'} (${cl.environment || 'Docker'})`;
+
+                    const cLat = document.getElementById('cloud-latency');
+                    if (cLat) cLat.textContent = cl.latency_ms ? `${cl.latency_ms} ms` : (cl.online ? 'Activo' : 'Offline');
+
+                    const cHttp = document.getElementById('cloud-http-status');
+                    if (cHttp) {
+                        cHttp.textContent = cl.http_code ? `${cl.http_code} ${cl.http_code === 200 ? 'OK' : ''}` : (cl.online ? '200 OK' : 'Offline');
+                        cHttp.className = cl.online ? 'text-base font-bold text-emerald-400 font-mono' : 'text-base font-bold text-red-400 font-mono';
+                    }
+
+                    const cBadge = document.getElementById('cloud-badge');
+                    if (cBadge) {
+                        if (cl.online) {
+                            cBadge.className = 'px-1.5 py-0.2 rounded text-[10px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
+                            cBadge.textContent = 'ONLINE';
+                        } else {
+                            cBadge.className = 'px-1.5 py-0.2 rounded text-[10px] font-mono bg-red-500/10 text-red-400 border border-red-500/30';
+                            cBadge.textContent = 'SLEEPING';
+                        }
+                    }
+
+                    if (cl.url) {
+                        ['cloud-link-title', 'cloud-btn-open', 'btn-cloud-app'].forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.href = cl.url;
+                        });
+                    }
+                    if (cl.dashboard_url) {
+                        ['cloud-link-icon', 'cloud-btn-dashboard'].forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.href = cl.dashboard_url;
+                        });
+                    }
                 }
 
                 // System

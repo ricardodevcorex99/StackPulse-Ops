@@ -121,6 +121,13 @@ function loadEnv(): array
         'WEB_APP_NAME' => 'Web App (Laravel)',
         'WEB_APP_URL' => 'http://localhost:8000',
         'WEB_APP_PORT' => '8000',
+        'CLOUD_HOSTING_ENABLED' => 'true',
+        'CLOUD_HOSTING_NAME' => 'Render Cloud',
+        'CLOUD_HOSTING_URL' => 'https://miveci-app.onrender.com',
+        'CLOUD_HOSTING_ACCOUNT_USER' => 'davidbetancourt2499@gmail.com',
+        'CLOUD_HOSTING_DASHBOARD_URL' => 'https://dashboard.render.com',
+        'CLOUD_HOSTING_REGION' => 'Oregon (US West)',
+        'CLOUD_HOSTING_ENVIRONMENT' => 'Docker Alpine PHP 8.4',
     ];
 
     if ($envPath) {
@@ -270,6 +277,33 @@ function getStatus(array $env, bool $hasLaravel): array
         fclose($fp);
     }
 
+    // 5. Cloud Hosting / Production Web App (Render)
+    $cloudEnabled = ($env['CLOUD_HOSTING_ENABLED'] ?? 'true') !== 'false';
+    $cloudOnline = false;
+    $cloudLatency = null;
+    $cloudHttpCode = null;
+    $cloudUrl = $env['CLOUD_HOSTING_URL'] ?? 'https://miveci-app.onrender.com';
+
+    if ($cloudEnabled && !empty($cloudUrl)) {
+        $cStart = microtime(true);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $cloudUrl);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_exec($ch);
+        $cloudHttpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlTotalTime = curl_getinfo($ch, CURLINFO_TOTAL_TIME);
+        curl_close($ch);
+
+        if ($cloudHttpCode >= 200 && $cloudHttpCode < 500) {
+            $cloudOnline = true;
+            $cloudLatency = round($curlTotalTime * 1000, 2);
+        }
+    }
+
     // Host cluster info
     $clusterHost = 'localhost';
     if (preg_match('/@([^:\/]+)/', $mongoUri, $matches)) {
@@ -324,6 +358,18 @@ function getStatus(array $env, bool $hasLaravel): array
             'online' => $appOnline,
             'port' => $appPort,
             'url' => $appUrl,
+        ],
+        'cloud_hosting' => [
+            'enabled' => $cloudEnabled,
+            'name' => $env['CLOUD_HOSTING_NAME'] ?? 'Render Cloud',
+            'online' => $cloudOnline,
+            'url' => $cloudUrl,
+            'dashboard_url' => $env['CLOUD_HOSTING_DASHBOARD_URL'] ?? 'https://dashboard.render.com',
+            'account_user' => $env['CLOUD_HOSTING_ACCOUNT_USER'] ?? 'davidbetancourt2499@gmail.com',
+            'http_code' => $cloudHttpCode,
+            'latency_ms' => $cloudLatency,
+            'region' => $env['CLOUD_HOSTING_REGION'] ?? 'Oregon (US West)',
+            'environment' => $env['CLOUD_HOSTING_ENVIRONMENT'] ?? 'Docker Alpine PHP 8.4',
         ],
     ];
 }
