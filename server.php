@@ -75,6 +75,12 @@ if ($uri === '/api/ai/restart') {
     exit;
 }
 
+if ($uri === '/api/cerberus/restart') {
+    header('Content-Type: application/json');
+    echo json_encode(restartCerberus($env));
+    exit;
+}
+
 // Serve SPA Dashboard
 if ($uri === '/' || $uri === '/index.html') {
     header('Content-Type: text/html; charset=UTF-8');
@@ -128,6 +134,13 @@ function loadEnv(): array
         'CLOUD_HOSTING_DASHBOARD_URL' => 'https://dashboard.render.com',
         'CLOUD_HOSTING_REGION' => 'Oregon (US West)',
         'CLOUD_HOSTING_ENVIRONMENT' => 'Docker Alpine PHP 8.4',
+        'CERBERUS_ENABLED' => 'true',
+        'CERBERUS_NAME' => 'Cerberus AI Security SIEM',
+        'CERBERUS_URL' => 'http://127.0.0.1:5050',
+        'CERBERUS_PORT' => '5050',
+        'CERBERUS_DASHBOARD_URL' => 'http://localhost:5050',
+        'CERBERUS_TERMINAL_URL' => 'http://localhost:5055',
+        'CERBERUS_RESTART_COMMAND' => 'bash ../Cerberus-AI/start.sh',
     ];
 
     if ($envPath) {
@@ -249,6 +262,14 @@ function getStatus(array $env, bool $hasLaravel): array
     $aiOnline = false;
     $aiLatency = null;
     $aiEngine = 'Online';
+    $aiPort = (int)($env['AI_SERVICE_PORT'] ?? 5001);
+
+    // Fast socket probe
+    $fpAi = @fsockopen('127.0.0.1', $aiPort, $errno, $errstr, 0.4);
+    if ($fpAi) {
+        $aiOnline = true;
+        fclose($fpAi);
+    }
 
     if (!empty($aiUrl)) {
         $start = microtime(true);
@@ -264,16 +285,21 @@ function getStatus(array $env, bool $hasLaravel): array
             $json = json_decode((string)$res, true);
             if (isset($json['engine'])) $aiEngine = $json['engine'];
             elseif (isset($json['service'])) $aiEngine = $json['service'];
+        } elseif ($aiOnline && $aiLatency === null) {
+            $aiLatency = round((microtime(true) - $start) * 1000, 2);
         }
     }
 
     // 4. Web App Status
     $appUrl = $env['WEB_APP_URL'] ?? 'http://127.0.0.1:8000';
     $appOnline = false;
+    $appLatency = null;
     $appPort = (int)($env['WEB_APP_PORT'] ?? 8000);
+    $wStart = microtime(true);
     $fp = @fsockopen('127.0.0.1', $appPort, $errno, $errstr, 0.4);
     if ($fp) {
         $appOnline = true;
+        $appLatency = round((microtime(true) - $wStart) * 1000, 2);
         fclose($fp);
     }
 
@@ -296,11 +322,28 @@ function getStatus(array $env, bool $hasLaravel): array
         curl_exec($ch);
         $cloudHttpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlTotalTime = curl_getinfo($ch, CURLINFO_TOTAL_TIME);
-        curl_close($ch);
+        if (PHP_VERSION_ID < 80500) { @curl_close($ch); }
 
         if ($cloudHttpCode >= 200 && $cloudHttpCode < 500) {
             $cloudOnline = true;
             $cloudLatency = round($curlTotalTime * 1000, 2);
+        }
+    }
+
+    // 6. Cerberus AI Security SIEM Suite
+    $cerberusEnabled = ($env['CERBERUS_ENABLED'] ?? 'true') !== 'false';
+    $cerberusOnline = false;
+    $cerberusLatency = null;
+    $cerberusPort = (int)($env['CERBERUS_PORT'] ?? 5050);
+    $cerberusUrl = $env['CERBERUS_URL'] ?? 'http://127.0.0.1:5050';
+
+    if ($cerberusEnabled) {
+        $cbStart = microtime(true);
+        $fpCerb = @fsockopen('127.0.0.1', $cerberusPort, $errno, $errstr, 0.4);
+        if ($fpCerb) {
+            $cerberusOnline = true;
+            $cerberusLatency = round((microtime(true) - $cbStart) * 1000, 2);
+            fclose($fpCerb);
         }
     }
 
@@ -358,6 +401,7 @@ function getStatus(array $env, bool $hasLaravel): array
             'online' => $appOnline,
             'port' => $appPort,
             'url' => $appUrl,
+            'latency_ms' => $appLatency,
         ],
         'cloud_hosting' => [
             'enabled' => $cloudEnabled,
@@ -370,6 +414,17 @@ function getStatus(array $env, bool $hasLaravel): array
             'latency_ms' => $cloudLatency,
             'region' => $env['CLOUD_HOSTING_REGION'] ?? 'Oregon (US West)',
             'environment' => $env['CLOUD_HOSTING_ENVIRONMENT'] ?? 'Docker Alpine PHP 8.4',
+        ],
+        'cerberus' => [
+            'enabled' => $cerberusEnabled,
+            'name' => $env['CERBERUS_NAME'] ?? 'Cerberus AI Security SIEM',
+            'online' => $cerberusOnline,
+            'url' => $cerberusUrl,
+            'port' => $cerberusPort,
+            'dashboard_url' => $env['CERBERUS_DASHBOARD_URL'] ?? 'http://localhost:5050',
+            'terminal_url' => $env['CERBERUS_TERMINAL_URL'] ?? 'http://localhost:5055',
+            'latency_ms' => $cerberusLatency,
+            'sentinel_status' => $cerberusOnline ? 'Vigilancia Activa' : 'Detenido',
         ],
     ];
 }
@@ -464,16 +519,40 @@ function getStorageFiles(array $env, bool $hasLaravel): array
 function restartAi(array $env): array
 {
     $cmd = $env['AI_RESTART_COMMAND'] ?? '';
-    if (empty($cmd)) {
-        return ['success' => false, 'message' => 'No restart command configured in .env'];
-    }
-
     try {
         shell_exec('pkill -f "uvicorn server:app"');
         usleep(400000);
-        shell_exec("nohup {$cmd} > /dev/null 2>&1 &");
+        $aiDir = realpath(__DIR__ . '/../Proyecto_1/ai_service');
+        if ($aiDir && file_exists($aiDir . '/start.sh')) {
+            shell_exec("cd '{$aiDir}' && nohup bash start.sh > /dev/null 2>&1 &");
+        } elseif (!empty($cmd)) {
+            shell_exec("nohup {$cmd} > /dev/null 2>&1 &");
+        }
         sleep(1);
-        return ['success' => true, 'message' => 'Service restart command dispatched.'];
+        return ['success' => true, 'message' => 'Servicio IA Super-Resolución reiniciado con éxito.'];
+    } catch (\Throwable $e) {
+        return ['success' => false, 'error' => $e->getMessage()];
+    }
+}
+
+function restartCerberus(array $env): array
+{
+    $cmd = $env['CERBERUS_RESTART_COMMAND'] ?? '';
+    try {
+        shell_exec('pkill -f "python3 core/web_dashboard.py"');
+        shell_exec('pkill -f "python3 core/web_terminal.py"');
+        usleep(400000);
+        $cerberusDir = realpath(__DIR__ . '/../Cerberus-AI');
+        if ($cerberusDir && file_exists($cerberusDir . '/core/web_dashboard.py')) {
+            shell_exec("cd '{$cerberusDir}' && nohup python3 core/web_dashboard.py > /dev/null 2>&1 &");
+            if (file_exists($cerberusDir . '/core/web_terminal.py')) {
+                shell_exec("cd '{$cerberusDir}' && nohup python3 core/web_terminal.py > /dev/null 2>&1 &");
+            }
+        } elseif (!empty($cmd)) {
+            shell_exec("nohup {$cmd} > /dev/null 2>&1 &");
+        }
+        sleep(1);
+        return ['success' => true, 'message' => 'Cerberus AI Security SIEM reiniciado con éxito.'];
     } catch (\Throwable $e) {
         return ['success' => false, 'error' => $e->getMessage()];
     }

@@ -30,6 +30,7 @@
         .glow-blue { box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.2); }
         .glow-purple { box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.2); }
         .glow-indigo { box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.25); }
+        .glow-rose { box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.25); }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0b0f19; }
         ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
@@ -90,8 +91,9 @@
                         <span id="badge-mongo-user" class="px-2 py-0.5 rounded bg-emerald-950/80 font-mono text-[11px] text-emerald-300 border border-emerald-800/60">🍃 Mongo: Conectando...</span>
                         <span id="badge-storage-user" class="px-2 py-0.5 rounded bg-amber-950/80 font-mono text-[11px] text-amber-300 border border-amber-800/60">☁️ Storage: Conectando...</span>
                         <span id="badge-cloud-user" class="px-2 py-0.5 rounded bg-indigo-950/80 font-mono text-[11px] text-indigo-300 border border-indigo-800/60">🚀 Cloud: Conectando...</span>
+                        <span id="badge-cerberus-user" class="px-2 py-0.5 rounded bg-rose-950/80 font-mono text-[11px] text-rose-300 border border-rose-800/60">🛡️ Cerberus SIEM: Conectando...</span>
                     </div>
-                    <p class="text-xs text-gray-400 mt-1">Monitoreo y exploración directa de base de datos, almacenamiento de objetos, microservicios, app local y hosting cloud.</p>
+                    <p class="text-xs text-gray-400 mt-1">Supervisión integral de base de datos, almacenamiento de objetos, microservicios IA, app local, hosting cloud y escudo SIEM.</p>
                 </div>
             </div>
 
@@ -107,8 +109,8 @@
             </div>
         </div>
 
-        <!-- KPI 5 Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        <!-- KPI 6 Cards Grid (3 columnas x 2 filas) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             
             <!-- Card 1: MongoDB Atlas -->
             <div class="p-5 rounded-2xl bg-[#0f172a]/70 border border-gray-800 hover:border-emerald-500/50 transition-all glow-emerald flex flex-col justify-between group">
@@ -267,8 +269,8 @@
                         <span class="font-mono text-gray-200" id="sys-php">--</span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
-                        <span class="text-gray-400">RAM Ops:</span>
-                        <span class="font-mono text-emerald-400" id="sys-ram">-- MB</span>
+                        <span class="text-gray-400">Latencia Ping:</span>
+                        <span class="font-mono text-emerald-400" id="app-latency">-- ms</span>
                     </div>
                     <div class="bg-gray-900/60 p-2 rounded-lg border border-gray-800/60 flex items-center justify-between text-xs">
                         <span class="text-gray-400">Puerto:</span>
@@ -326,6 +328,51 @@
                         <a id="cloud-btn-dashboard" href="https://dashboard.render.com" target="_blank" class="py-1.5 px-2 rounded-lg bg-gray-800/80 hover:bg-gray-700 border border-gray-700 text-gray-200 text-xs font-medium flex items-center justify-center space-x-1 transition active:scale-95">
                             <span>Consola</span>
                             <span class="material-symbols-outlined text-xs">open_in_new</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Cerberus AI Security SIEM Suite -->
+            <div class="p-5 rounded-2xl bg-[#0f172a]/70 border border-gray-800 hover:border-rose-500/50 transition-all glow-rose flex flex-col justify-between group">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="text-xs font-mono uppercase tracking-wider text-gray-400">Seguridad SIEM</span>
+                            <span id="cerberus-badge" class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-rose-500/10 text-rose-400 border border-rose-500/30">ONLINE</span>
+                        </div>
+                        <a id="cerberus-link-title" href="http://localhost:5050" target="_blank" class="text-lg font-bold text-white mt-1 hover:text-rose-400 transition flex items-center space-x-1">
+                            <span id="cerberus-name">Cerberus SIEM</span>
+                            <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100 transition">open_in_new</span>
+                        </a>
+                    </div>
+                    <a id="cerberus-link-icon" href="http://localhost:5050" target="_blank" class="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center hover:bg-rose-500/20 transition">
+                        <span class="material-symbols-outlined text-xl">shield</span>
+                    </a>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-gray-800/80 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400">Puerto SIEM:</span>
+                        <span class="font-mono text-rose-300" id="cerberus-port">5050</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400">Latencia Ping:</span>
+                        <span class="font-mono text-emerald-400" id="cerberus-latency">-- ms</span>
+                    </div>
+                    <div class="bg-gray-900/60 p-2 rounded-lg border border-gray-800/60 flex items-center justify-between text-xs">
+                        <span class="text-gray-400">Escudo Centinela:</span>
+                        <span class="text-xs font-bold text-emerald-400 font-mono" id="cerberus-sentinel">Vigilancia Activa</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-1.5 pt-1">
+                        <a id="cerberus-btn-open" href="http://localhost:5050" target="_blank" class="py-1.5 px-2 rounded-lg bg-rose-950/60 hover:bg-rose-900/80 border border-rose-800/50 text-rose-300 text-xs font-medium flex items-center justify-center space-x-1 transition active:scale-95 shadow-sm">
+                            <span class="material-symbols-outlined text-xs">security</span>
+                            <span>Consola SIEM</span>
+                        </a>
+                        <a id="cerberus-btn-terminal" href="http://localhost:5055" target="_blank" class="py-1.5 px-2 rounded-lg bg-gray-800/80 hover:bg-gray-700 border border-gray-700 text-gray-200 text-xs font-medium flex items-center justify-center space-x-1 transition active:scale-95">
+                            <span class="material-symbols-outlined text-xs">terminal</span>
+                            <span>Terminal</span>
                         </a>
                     </div>
                 </div>
@@ -575,11 +622,13 @@
                 document.getElementById('app-service-name').textContent = w.name || 'Web App';
                 document.getElementById('app-port').textContent = w.port || 8000;
                 document.getElementById('btn-web-app').href = w.url || '#';
+                const appLat = document.getElementById('app-latency');
+                if (appLat) appLat.textContent = w.latency_ms ? `${w.latency_ms} ms` : (w.online ? 'Activo' : 'Offline');
 
                 const wBadge = document.getElementById('app-badge');
                 if (w.online) {
                     wBadge.className = 'px-1.5 py-0.2 rounded text-[10px] font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/30';
-                    wBadge.textContent = `PUERTO ${w.port}`;
+                    wBadge.textContent = 'ONLINE';
                 } else {
                     wBadge.className = 'px-1.5 py-0.2 rounded text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/30';
                     wBadge.textContent = 'ESPERANDO';
@@ -638,6 +687,50 @@
                             const el = document.getElementById(id);
                             if (el) el.href = cl.dashboard_url;
                         });
+                    }
+                }
+
+                // Cerberus AI Security SIEM Suite
+                const cb = data.cerberus;
+                if (cb) {
+                    const cbUser = document.getElementById('badge-cerberus-user');
+                    if (cbUser) cbUser.textContent = `🛡️ Cerberus SIEM: ${cb.online ? 'Online (5050)' : 'Offline'}`;
+
+                    const cbName = document.getElementById('cerberus-name');
+                    if (cbName) cbName.textContent = cb.name || 'Cerberus SIEM';
+
+                    const cbPort = document.getElementById('cerberus-port');
+                    if (cbPort) cbPort.textContent = cb.port || 5050;
+
+                    const cbLat = document.getElementById('cerberus-latency');
+                    if (cbLat) cbLat.textContent = cb.latency_ms ? `${cb.latency_ms} ms` : (cb.online ? 'Activo' : 'Offline');
+
+                    const cbSent = document.getElementById('cerberus-sentinel');
+                    if (cbSent) {
+                        cbSent.textContent = cb.sentinel_status || (cb.online ? 'Vigilancia Activa' : 'Detenido');
+                        cbSent.className = cb.online ? 'text-xs font-bold text-emerald-400 font-mono' : 'text-xs font-bold text-rose-400 font-mono';
+                    }
+
+                    const cbBadge = document.getElementById('cerberus-badge');
+                    if (cbBadge) {
+                        if (cb.online) {
+                            cbBadge.className = 'px-1.5 py-0.2 rounded text-[10px] font-mono bg-rose-500/10 text-rose-400 border border-rose-500/30';
+                            cbBadge.textContent = 'ONLINE';
+                        } else {
+                            cbBadge.className = 'px-1.5 py-0.2 rounded text-[10px] font-mono bg-red-500/10 text-red-400 border border-red-500/30';
+                            cbBadge.textContent = 'OFFLINE';
+                        }
+                    }
+
+                    if (cb.dashboard_url) {
+                        ['cerberus-link-title', 'cerberus-link-icon', 'cerberus-btn-open'].forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.href = cb.dashboard_url;
+                        });
+                    }
+                    if (cb.terminal_url) {
+                        const termBtn = document.getElementById('cerberus-btn-terminal');
+                        if (termBtn) termBtn.href = cb.terminal_url;
                     }
                 }
 
@@ -750,6 +843,17 @@
             } finally {
                 btn.innerHTML = originalHtml;
                 btn.disabled = false;
+            }
+        }
+
+        async function restartCerberus() {
+            try {
+                const res = await fetch('/api/cerberus/restart');
+                const data = await res.json();
+                alert(data.message || 'Cerberus SIEM reiniciado.');
+                fetchStatus();
+            } catch (err) {
+                alert('Error al reiniciar Cerberus: ' + err.message);
             }
         }
 

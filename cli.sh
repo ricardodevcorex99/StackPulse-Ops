@@ -84,6 +84,33 @@ if ($w["enabled"]) {
     }
 }
 
+echo "  --------------------------------------------------------------\n";
+
+// 5. Cloud Hosting (Render)
+$c = $status["cloud_hosting"];
+if ($c["enabled"]) {
+    if ($c["online"]) {
+        echo "  " . $GREEN . "[✓] " . $c["name"] . ":" . $RESET . " EN LÍNEA (" . ($c["latency_ms"] ? $c["latency_ms"] . "ms" : "OK") . ")\n";
+        echo "      URL Producción:     " . $CYAN . $c["url"] . $RESET . "\n";
+    } else {
+        echo "  " . $RED . "[✗] " . $c["name"] . ":" . $RESET . " INACTIVO / SLEEPING\n";
+    }
+}
+
+echo "  --------------------------------------------------------------\n";
+
+// 6. Cerberus AI Security SIEM
+$cb = $status["cerberus"];
+if ($cb["enabled"]) {
+    if ($cb["online"]) {
+        echo "  " . $GREEN . "[✓] " . $cb["name"] . ":" . $RESET . " ACTIVO (Puerto " . $cb["port"] . ")\n";
+        echo "      Consola SIEM:       " . $CYAN . $cb["dashboard_url"] . $RESET . "\n";
+        echo "      Terminal Web:       " . $CYAN . $cb["terminal_url"] . $RESET . "\n";
+    } else {
+        echo "  " . $YELLOW . "[!] " . $cb["name"] . ":" . $RESET . " OFFLINE (Puerto " . $cb["port"] . " apagado)\n";
+    }
+}
+
 echo "  " . $CYAN . "==============================================================" . $RESET . "\n";
 echo "  " . $BOLD . "Tip:" . $RESET . " Abre la interfaz gráfica con:\n";
 echo "  " . $GREEN . "bash start.sh" . $RESET . " (se abre en http://localhost:" . $status["system"]["server_port"] . ")\n\n";
