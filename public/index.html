@@ -292,7 +292,7 @@
                             <span class="text-xs font-mono uppercase tracking-wider text-gray-400">Cloud Hosting</span>
                             <span id="cloud-badge" class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">ONLINE</span>
                         </div>
-                        <a id="cloud-link-title" href="https://miveci-app.onrender.com" target="_blank" class="text-lg font-bold text-white mt-1 hover:text-indigo-400 transition flex items-center space-x-1">
+                        <a id="cloud-link-title" href="https://dashboard.render.com" target="_blank" class="text-lg font-bold text-white mt-1 hover:text-indigo-400 transition flex items-center space-x-1" title="Abrir Consola y Métricas de Render">
                             <span id="cloud-name">Render Cloud</span>
                             <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100 transition">open_in_new</span>
                         </a>
@@ -677,13 +677,13 @@
                     }
 
                     if (cl.url) {
-                        ['cloud-link-title', 'cloud-btn-open', 'btn-cloud-app'].forEach(id => {
+                        ['cloud-btn-open', 'btn-cloud-app'].forEach(id => {
                             const el = document.getElementById(id);
                             if (el) el.href = cl.url;
                         });
                     }
                     if (cl.dashboard_url) {
-                        ['cloud-link-icon', 'cloud-btn-dashboard'].forEach(id => {
+                        ['cloud-link-title', 'cloud-link-icon', 'cloud-btn-dashboard'].forEach(id => {
                             const el = document.getElementById(id);
                             if (el) el.href = cl.dashboard_url;
                         });
