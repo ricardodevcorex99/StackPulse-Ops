@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+@ini_set('max_execution_time', '0');
+@set_time_limit(0);
+
 /**
  * StackPulse Ops - Universal Localhost & Cloud Operations Server
  * Real-time monitoring hub for terminal and browser.
@@ -520,15 +523,15 @@ function restartAi(array $env): array
 {
     $cmd = $env['AI_RESTART_COMMAND'] ?? '';
     try {
-        shell_exec('pkill -f "uvicorn server:app"');
+        @exec('pkill -f "uvicorn server:app"');
         usleep(400000);
         $aiDir = realpath(__DIR__ . '/../Proyecto_1/ai_service');
         if ($aiDir && file_exists($aiDir . '/start.sh')) {
-            shell_exec("cd '{$aiDir}' && nohup bash start.sh > /dev/null 2>&1 &");
+            @exec("cd '{$aiDir}' && (nohup bash start.sh </dev/null >/dev/null 2>&1 &)");
         } elseif (!empty($cmd)) {
-            shell_exec("nohup {$cmd} > /dev/null 2>&1 &");
+            @exec("(nohup {$cmd} </dev/null >/dev/null 2>&1 &)");
         }
-        sleep(1);
+        usleep(300000);
         return ['success' => true, 'message' => 'Servicio IA Super-Resolución reiniciado con éxito.'];
     } catch (\Throwable $e) {
         return ['success' => false, 'error' => $e->getMessage()];
@@ -539,19 +542,19 @@ function restartCerberus(array $env): array
 {
     $cmd = $env['CERBERUS_RESTART_COMMAND'] ?? '';
     try {
-        shell_exec('pkill -f "python3 core/web_dashboard.py"');
-        shell_exec('pkill -f "python3 core/web_terminal.py"');
+        @exec('pkill -f "python3 core/web_dashboard.py"');
+        @exec('pkill -f "python3 core/web_terminal.py"');
         usleep(400000);
         $cerberusDir = realpath(__DIR__ . '/../Cerberus-AI');
         if ($cerberusDir && file_exists($cerberusDir . '/core/web_dashboard.py')) {
-            shell_exec("cd '{$cerberusDir}' && nohup python3 core/web_dashboard.py > /dev/null 2>&1 &");
+            @exec("cd '{$cerberusDir}' && (nohup python3 core/web_dashboard.py </dev/null >/dev/null 2>&1 &)");
             if (file_exists($cerberusDir . '/core/web_terminal.py')) {
-                shell_exec("cd '{$cerberusDir}' && nohup python3 core/web_terminal.py > /dev/null 2>&1 &");
+                @exec("cd '{$cerberusDir}' && (nohup python3 core/web_terminal.py </dev/null >/dev/null 2>&1 &)");
             }
         } elseif (!empty($cmd)) {
-            shell_exec("nohup {$cmd} > /dev/null 2>&1 &");
+            @exec("(nohup {$cmd} </dev/null >/dev/null 2>&1 &)");
         }
-        sleep(1);
+        usleep(300000);
         return ['success' => true, 'message' => 'Cerberus AI Security SIEM reiniciado con éxito.'];
     } catch (\Throwable $e) {
         return ['success' => false, 'error' => $e->getMessage()];

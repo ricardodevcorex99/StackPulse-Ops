@@ -69,4 +69,4 @@ echo -e "  Presiona ${RED}Ctrl + C${RESET} en esta terminal cuando desees detene
 echo -e "${BOLD}--------------------------------------------------------------------------------${RESET}"
 echo ""
 
-php -S 127.0.0.1:$PORT server.php
+php -d max_execution_time=0 -d memory_limit=512M -S 127.0.0.1:$PORT server.php
