@@ -283,6 +283,10 @@
                         <span class="font-mono text-gray-200" id="sys-php">--</span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400">RAM Consumida:</span>
+                        <span class="font-mono text-gray-200" id="sys-ram">-- MB</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
                         <span class="text-gray-400">Latencia Ping:</span>
                         <span class="font-mono text-emerald-400" id="app-latency">-- ms</span>
                     </div>
@@ -852,8 +856,10 @@
                 }
 
                 // System
-                document.getElementById('sys-php').textContent = data.system.php_version?.split('-')[0] || 'PHP 8';
-                document.getElementById('sys-ram').textContent = `${data.system.memory_used_mb} MB`;
+                const sysPhp = document.getElementById('sys-php');
+                if (sysPhp) sysPhp.textContent = data.system.php_version?.split('-')[0] || 'PHP 8';
+                const sysRam = document.getElementById('sys-ram');
+                if (sysRam) sysRam.textContent = `${data.system.memory_used_mb} MB`;
 
                 // Update Sync Status
                 if (s.auto_sync_status) {
