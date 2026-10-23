@@ -1054,7 +1054,7 @@
                                         <div class="h-full rounded-full transition-all duration-500 ${lead.catalog_progress >= 70 ? 'bg-gradient-to-r from-emerald-500 to-teal-400' : (lead.catalog_progress >= 30 ? 'bg-gradient-to-r from-cyan-500 to-blue-500' : 'bg-gray-600')}" style="width: ${lead.catalog_progress}%"></div>
                                     </div>
                                     <div class="text-[10px] text-gray-400 font-mono flex items-center gap-1">
-                                        ${lead.ai_used ? '<span class="text-purple-300">✨ IA CodeFormer Activa</span>' : '<span class="text-gray-500">Catálogo manual</span>'}
+                                        ${lead.ai_used ? '<span class="text-purple-300">✨ IA CodeFormer Activa</span>' : '<span class="text-gray-500">Sin uso de IA aún</span>'}
                                     </div>
                                 </div>
                             </td>
@@ -1088,10 +1088,17 @@
 
                             <!-- Acción Comercial (1-Click Pitch) -->
                             <td class="py-3 px-4 text-right">
-                                <a href="${lead.pitch_url}" target="_blank" class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold text-xs shadow-lg shadow-emerald-950/40 transition active:scale-95 group">
-                                    <span class="material-symbols-outlined text-sm group-hover:rotate-12 transition-transform">rocket_launch</span>
-                                    <span>Cotizar con BioCoreXStack</span>
-                                </a>
+                                ${lead.has_phone ? `
+                                    <a href="${lead.pitch_url}" target="_blank" class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold text-xs shadow-lg shadow-emerald-950/40 transition active:scale-95 group">
+                                        <span class="material-symbols-outlined text-sm group-hover:rotate-12 transition-transform">rocket_launch</span>
+                                        <span>Cotizar con BioCoreXStack</span>
+                                    </a>
+                                ` : `
+                                    <span class="inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-gray-800/80 text-gray-400 font-mono text-[11px] border border-gray-700/60" title="El vendedor no ha registrado número celular aún">
+                                        <span class="material-symbols-outlined text-sm text-gray-500">phone_disabled</span>
+                                        <span>Sin teléfono</span>
+                                    </span>
+                                `}
                             </td>
                         </tr>
                     `;

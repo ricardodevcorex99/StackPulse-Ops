@@ -603,113 +603,90 @@ function getB2BLeads(array $env, bool $hasLaravel): array
     $totalInteractions = 0;
     $hotLeadsCount = 0;
 
-    // Negocios registrados y candidatos locales monitoreados por telemetría
-    $candidates = [
-        [
-            'id' => 'biz_1792784514590',
-            'name' => 'Mi Negocio (Quito Norte)',
-            'owner' => 'David Betancourt',
-            'email' => 'davidbetancourt2499@gmail.com',
-            'phone' => '0987654321',
-            'category' => 'Minimarket & Abarrotes',
-            'address' => 'Carapungo, San José de Morán, Quito',
-            'products_count' => 18,
-            'whatsapp_clicks' => 34,
-            'ai_used' => true,
-            'is_mongo' => true,
-        ],
-        [
-            'id' => 'biz_ferr_calderon',
-            'name' => 'Ferretería & Materiales Calderón',
-            'owner' => 'Ing. Marco Morales',
-            'email' => 'ventas@ferreteriacalderon.ec',
-            'phone' => '0991234567',
-            'category' => 'Ferreterías & Construcción',
-            'address' => 'Av. Giovanni Calles, Calderón',
-            'products_count' => 38,
-            'whatsapp_clicks' => 52,
-            'ai_used' => true,
-            'is_mongo' => false,
-        ],
-        [
-            'id' => 'biz_pizza_forno',
-            'name' => 'Pizzería & Trattoria Forno Vecinal',
-            'owner' => 'Carlos Andrade',
-            'email' => 'fornovecinal@gmail.com',
-            'phone' => '0984567890',
-            'category' => 'Restaurantes & Gastronomía',
-            'address' => 'Calle Carapungo y Galo Plaza Lasso',
-            'products_count' => 24,
-            'whatsapp_clicks' => 47,
-            'ai_used' => true,
-            'is_mongo' => false,
-        ],
-        [
-            'id' => 'biz_taller_auto',
-            'name' => 'Taller Mecánico & Frenos El Vecino',
-            'owner' => 'Luis Guaman',
-            'email' => 'taller.elvecino@gmail.com',
-            'phone' => '0998765432',
-            'category' => 'Talleres & Servicios Automotrices',
-            'address' => 'Panamericana Norte Km 11, Carapungo',
-            'products_count' => 16,
-            'whatsapp_clicks' => 29,
-            'ai_used' => false,
-            'is_mongo' => false,
-        ],
-        [
-            'id' => 'biz_farma_salud',
-            'name' => 'Farmacia & Droguería Santa Martha',
-            'owner' => 'Dra. Patricia Valencia',
-            'email' => 'farmaciasantamartha@gmail.com',
-            'phone' => '0978901234',
-            'category' => 'Salud & Medicamentos',
-            'address' => 'Av. Capitán Giovanni Calles 450',
-            'products_count' => 42,
-            'whatsapp_clicks' => 61,
-            'ai_used' => true,
-            'is_mongo' => false,
-        ],
-        [
-            'id' => 'biz_bazar_regalos',
-            'name' => 'Bazar & Papelería Copy Express',
-            'owner' => 'Elena Rivas',
-            'email' => 'copyexpress.uio@gmail.com',
-            'phone' => '0961239874',
-            'category' => 'Papelería & Suministros',
-            'address' => 'Sector Carapungo Etapa 2',
-            'products_count' => 11,
-            'whatsapp_clicks' => 18,
-            'ai_used' => false,
-            'is_mongo' => false,
-        ],
-    ];
+    $candidates = [];
 
-    // Enriquecer con datos reales de MongoDB si está disponible
+    // Extraer ÚNICAMENTE documentos reales desde MongoDB Atlas (CERO MOCK DATA)
     if ($hasLaravel) {
         try {
             $db = \Illuminate\Support\Facades\DB::connection('mongodb');
             $mongoBiz = $db->table('businesses')->get();
-            $photoCount = $db->table('photo_restorations')->count();
-            $telemetryClicks = $db->table('buyer_telemetry')->where('type', 'whatsapp_click')->count();
-            if ($telemetryClicks === 0) {
-                $telemetryClicks = $db->table('buyer_telemetry')->count();
-            }
+
+            $users = $db->table('users')->get()->keyBy(function ($u) {
+                $uArr = (array) $u;
+                return strtolower((string)($uArr['email'] ?? ''));
+            });
 
             foreach ($mongoBiz as $mb) {
                 $mbArr = (array) $mb;
                 $name = $mbArr['storeName'] ?? ($mbArr['name'] ?? null);
-                if (!$name) continue;
-                $email = $mbArr['ownerEmail'] ?? ($mbArr['email'] ?? 'davidbetancourt2499@gmail.com');
-                $addr = $mbArr['address'] ?? 'Carapungo, San José de Morán, Quito';
 
-                $candidates[0]['name'] = $name;
-                $candidates[0]['email'] = $email;
-                $candidates[0]['address'] = $addr;
-                $candidates[0]['ai_used'] = ($photoCount > 0);
-                if ($telemetryClicks > 0) {
-                    $candidates[0]['whatsapp_clicks'] = max(34, (int)$telemetryClicks);
+                // Excluir registros vacíos o incompletos sin nombre comercial real
+                if (empty($name)) {
+                    continue;
                 }
+
+                $bizId = (string)($mbArr['id'] ?? ($mbArr['_id'] ?? ''));
+                $ownerEmail = strtolower((string)($mbArr['ownerEmail'] ?? ($mbArr['email'] ?? '')));
+
+                $ownerUser = $users->get($ownerEmail);
+                $ownerUserArr = $ownerUser ? (array) $ownerUser : [];
+
+                $ownerName = $mbArr['ownerName'] ?? ($ownerUserArr['name'] ?? 'Propietario MiVeci');
+
+                // Teléfono REAL: Si no tiene, mostrar "Sin teléfono" (prohibido inventar números)
+                $realPhone = $mbArr['phone'] ?? ($mbArr['whatsapp'] ?? ($ownerUserArr['phone'] ?? null));
+                $displayPhone = (!empty($realPhone) && trim((string)$realPhone) !== '') ? (string)$realPhone : 'Sin teléfono';
+
+                // Categoría REAL guardada
+                $category = $mbArr['category'] ?? ($mbArr['niche'] ?? 'Minimarket & Abarrotes');
+
+                // Dirección REAL guardada
+                $address = $mbArr['address'] ?? 'Sin dirección registrada';
+
+                // Conteo REAL de productos guardados en MongoDB
+                $products = $mbArr['products'] ?? [];
+                if (empty($products) && !empty($ownerUserArr['business_data'])) {
+                    $bData = is_array($ownerUserArr['business_data']) ? $ownerUserArr['business_data'] : json_decode((string)$ownerUserArr['business_data'], true);
+                    if (!empty($bData['products']) && is_array($bData['products'])) {
+                        $products = $bData['products'];
+                    }
+                }
+                $productsCount = is_array($products) ? count($products) : 0;
+
+                // Estado REAL de IA CodeFormer:
+                // Solo activo si realmente hay productos mejorados con IA
+                $aiUsed = false;
+                if (!empty($products)) {
+                    foreach ($products as $prod) {
+                        if (!empty($prod['ai_enhanced']) || !empty($prod['codeformer']) || (isset($prod['image']) && str_contains((string)$prod['image'], 'photo_'))) {
+                            $aiUsed = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Clics a WhatsApp REALES: lee 'whatsapp_clicks' de la BD
+                $clicks = (int)($mbArr['whatsapp_clicks'] ?? 0);
+                if ($clicks === 0 && !empty($bizId)) {
+                    $telemetryClicks = $db->table('buyer_telemetry')->where('business_id', $bizId)->where('type', 'whatsapp_click')->count();
+                    if ($telemetryClicks > 0) {
+                        $clicks = $telemetryClicks;
+                    }
+                }
+
+                $candidates[] = [
+                    'id' => $bizId,
+                    'name' => $name,
+                    'owner' => $ownerName,
+                    'email' => $ownerEmail,
+                    'phone' => $displayPhone,
+                    'category' => $category,
+                    'address' => $address,
+                    'products_count' => $productsCount,
+                    'whatsapp_clicks' => $clicks,
+                    'ai_used' => $aiUsed,
+                    'is_mongo' => true,
+                ];
             }
         } catch (\Throwable $t) {}
     }
@@ -722,26 +699,30 @@ function getB2BLeads(array $env, bool $hasLaravel): array
         $aiUsed = (bool)($item['ai_used'] ?? false);
         $cat = (string)($item['category'] ?? 'General');
 
-        // Algoritmo de Lead Scoring (0 a 100):
-        // 1. Catálogo (>15 productos): +30 pts (proporcional de 1 a 15)
+        // Algoritmo de Lead Scoring sobre datos 100% REALES (0 a 100):
+        // 1. Catálogo (>15 productos): +30 pts
         $catalogScore = min(30, (int)round(($pCount / 15) * 30));
 
-        // 2. Tracción (≥25 clics a WhatsApp): +30 pts (proporcional)
+        // 2. Tracción (≥25 clics a WhatsApp): +30 pts
         $tractionScore = min(30, (int)round(($wClicks / 25) * 30));
 
-        // 3. Uso de IA (CodeFormer / descripciones inteligentes): +20 pts
+        // 3. Uso de IA (CodeFormer activo): +20 pts
         $aiScore = $aiUsed ? 20 : 0;
 
-        // 4. Nicho de Ticket Medio/Alto: +20 pts
-        $catLower = mb_strtolower($cat);
-        $isHighTicket = false;
-        foreach ($highTicketKeywords as $keyword) {
-            if (str_contains($catLower, $keyword)) {
-                $isHighTicket = true;
-                break;
+        // 4. Nicho de Ticket Medio/Alto (solo si el negocio tiene al menos 1 producto o interacción): +20 pts
+        $nicheScore = 0;
+        if ($pCount > 0 || $wClicks > 0) {
+            $catLower = mb_strtolower($cat);
+            foreach ($highTicketKeywords as $keyword) {
+                if (str_contains($catLower, $keyword)) {
+                    $nicheScore = 20;
+                    break;
+                }
+            }
+            if ($nicheScore === 0) {
+                $nicheScore = 10;
             }
         }
-        $nicheScore = $isHighTicket ? 20 : 10;
 
         $score = min(100, $catalogScore + $tractionScore + $aiScore + $nicheScore);
 
@@ -760,19 +741,25 @@ function getB2BLeads(array $env, bool $hasLaravel): array
             $statusBadgeClass = 'bg-gray-800 text-gray-400 border border-gray-700';
         }
 
-        // WhatsApp 1-Click Pitch URL
-        $rawPhone = preg_replace('/\D+/', '', (string)($item['phone'] ?? '0987654321'));
-        if (str_starts_with($rawPhone, '0')) {
-            $cleanPhone = '593' . substr($rawPhone, 1);
-        } elseif (!str_starts_with($rawPhone, '593')) {
-            $cleanPhone = '593' . $rawPhone;
+        // WhatsApp 1-Click Pitch URL (solo si tiene teléfono real)
+        $hasPhone = !empty($item['phone']) && $item['phone'] !== 'Sin teléfono';
+        $cleanPhone = '';
+        $pitchUrl = '#';
+
+        if ($hasPhone) {
+            $rawPhone = preg_replace('/\D+/', '', (string)$item['phone']);
+            if (str_starts_with($rawPhone, '0')) {
+                $cleanPhone = '593' . substr($rawPhone, 1);
+            } elseif (!str_starts_with($rawPhone, '593')) {
+                $cleanPhone = '593' . $rawPhone;
+            } else {
+                $cleanPhone = $rawPhone;
+            }
+            $pitchMessage = "¡Hola {$item['name']}! Te escribimos del equipo de ingeniería de MiVeci y BioCoreXStack. Vimos que tu catálogo ya cuenta con {$pCount} productos y ha generado {$wClicks} interacciones de vecinos en el barrio. Por tu volumen de crecimiento, calificas para nuestro programa de creación de tu propia Página Web / E-commerce .com a medida. ¿Te enviamos una propuesta sin compromiso?";
+            $pitchUrl = "https://wa.me/{$cleanPhone}?text=" . rawurlencode($pitchMessage);
         } else {
-            $cleanPhone = $rawPhone;
+            $pitchMessage = "Negocio sin teléfono celular registrado en su perfil.";
         }
-
-        $pitchMessage = "¡Hola {$item['name']}! Te escribimos del equipo de ingeniería de MiVeci y BioCoreXStack. Vimos que tu catálogo ya cuenta con {$pCount} productos y ha generado {$wClicks} interacciones de vecinos en el barrio. Por tu volumen de crecimiento, calificas para nuestro programa de creación de tu propia Página Web / E-commerce .com a medida. ¿Te enviamos una propuesta sin compromiso?";
-
-        $pitchUrl = "https://wa.me/{$cleanPhone}?text=" . rawurlencode($pitchMessage);
 
         $totalBusinesses++;
         $totalProducts += $pCount;
@@ -784,6 +771,7 @@ function getB2BLeads(array $env, bool $hasLaravel): array
             'owner' => $item['owner'],
             'email' => $item['email'],
             'phone' => $item['phone'],
+            'has_phone' => $hasPhone,
             'clean_phone' => $cleanPhone,
             'category' => $cat,
             'address' => $item['address'],
@@ -797,7 +785,7 @@ function getB2BLeads(array $env, bool $hasLaravel): array
             'status_badge_class' => $statusBadgeClass,
             'pitch_message' => $pitchMessage,
             'pitch_url' => $pitchUrl,
-            'is_mongo' => (bool)($item['is_mongo'] ?? false),
+            'is_mongo' => true,
         ];
     }
 
