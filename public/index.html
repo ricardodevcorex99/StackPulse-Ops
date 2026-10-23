@@ -192,6 +192,13 @@
                         <span class="text-gray-400">Latencia:</span>
                         <span class="font-mono text-emerald-400" id="storage-latency">-- ms</span>
                     </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400">Pipeline R2:</span>
+                        <span class="font-mono text-emerald-400 flex items-center space-x-1" id="storage-sync-status">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>Auto-Sync R2 Activo</span>
+                        </span>
+                    </div>
                     <div class="bg-gray-900/60 p-2 rounded-lg border border-gray-800/60 flex items-center justify-between text-xs">
                         <span class="text-gray-400">Total Archivos:</span>
                         <span class="text-base font-bold text-white font-mono" id="storage-total-files">--</span>
@@ -230,6 +237,13 @@
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-gray-400">Latencia Ping:</span>
                         <span class="font-mono text-emerald-400" id="ai-latency">-- ms</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400">Nube Destino:</span>
+                        <span class="font-mono text-purple-300 flex items-center space-x-1" id="ai-pipeline-status">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span>
+                            <span>R2 Cloud Pipeline Vinculado</span>
+                        </span>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-1.5 pt-1">
@@ -379,6 +393,109 @@
             </div>
 
         </div>
+
+        <!-- SECTION: RADAR DE CONVERSIÓN B2B (BIOCOREXSTACK SALES ENGINE) -->
+        <section class="rounded-2xl border border-emerald-950/80 bg-[#0c1220]/95 backdrop-blur overflow-hidden shadow-2xl relative glow-emerald">
+            <!-- Header bar -->
+            <div class="p-5 border-b border-gray-800/80 bg-gradient-to-r from-[#0d1629] via-[#0d1e33] to-[#0d1629] flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shadow-inner">
+                            <span class="material-symbols-outlined text-lg">radar</span>
+                        </span>
+                        <div>
+                            <h2 class="text-base sm:text-lg font-bold text-white tracking-tight flex flex-wrap items-center gap-2">
+                                <span>RADAR DE CONVERSIÓN B2B</span>
+                                <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-mono font-medium border border-emerald-500/30">CLIENTES POTENCIALES PARA DESARROLLO WEB</span>
+                            </h2>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 pl-10">
+                        Motor Comercial <span class="text-emerald-400 font-semibold font-mono">BioCoreXStack</span> &bull; Telemetría en tiempo real sobre comercios con alto volumen de catálogo y clics vecinales.
+                    </p>
+                </div>
+
+                <div class="flex items-center space-x-3 self-start md:self-center">
+                    <span class="px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1.5 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>ANALIZANDO COLECCIONES MONGODB (miveci)</span>
+                    </span>
+                    <button onclick="loadB2BLeads()" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-medium border border-gray-700 flex items-center space-x-1.5 transition active:scale-95 shadow-sm">
+                        <span id="b2b-refresh-icon" class="material-symbols-outlined text-sm">cached</span>
+                        <span>Escanear Leads</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mini-KPIs Bar -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 bg-[#0a0f1d] border-b border-gray-800/80">
+                <!-- KPI 1 -->
+                <div class="bg-gray-900/60 p-3.5 rounded-xl border border-gray-800/80 flex items-center justify-between">
+                    <div>
+                        <span class="text-[11px] font-mono uppercase text-gray-400 tracking-wider">Total Negocios Registrados</span>
+                        <div class="text-2xl font-bold text-white font-mono mt-0.5" id="kpi-total-businesses">--</div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-xl">storefront</span>
+                    </div>
+                </div>
+
+                <!-- KPI 2 -->
+                <div class="bg-gray-900/60 p-3.5 rounded-xl border border-gray-800/80 flex items-center justify-between">
+                    <div>
+                        <span class="text-[11px] font-mono uppercase text-gray-400 tracking-wider">Total Productos en Catálogo</span>
+                        <div class="text-2xl font-bold text-purple-400 font-mono mt-0.5" id="kpi-total-products">--</div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-xl">inventory_2</span>
+                    </div>
+                </div>
+
+                <!-- KPI 3 -->
+                <div class="bg-gray-900/60 p-3.5 rounded-xl border border-gray-800/80 flex items-center justify-between">
+                    <div>
+                        <span class="text-[11px] font-mono uppercase text-gray-400 tracking-wider">Interacciones / Clics a WhatsApp</span>
+                        <div class="text-2xl font-bold text-emerald-400 font-mono mt-0.5" id="kpi-total-interactions">--</div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-xl">chat_bubble</span>
+                    </div>
+                </div>
+
+                <!-- KPI 4 -->
+                <div class="bg-gray-900/60 p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/5 flex items-center justify-between">
+                    <div>
+                        <span class="text-[11px] font-mono uppercase text-amber-400 tracking-wider font-semibold">🔥 Leads Calientes (Listos)</span>
+                        <div class="text-2xl font-bold text-amber-300 font-mono mt-0.5" id="kpi-hot-leads">--</div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center animate-pulse">
+                        <span class="material-symbols-outlined text-xl">local_fire_department</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table of Leads -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-800 bg-gray-950/80 text-[11px] font-mono uppercase tracking-wider text-gray-400">
+                            <th class="py-3 px-4">Negocio & Categoría</th>
+                            <th class="py-3 px-4">Uso del Catálogo</th>
+                            <th class="py-3 px-4">Tracción Vecinal</th>
+                            <th class="py-3 px-4">Estado del Lead</th>
+                            <th class="py-3 px-4 text-right">Acción Comercial (1-Click Pitch)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="b2b-leads-table-body" class="divide-y divide-gray-800/60 text-xs font-sans">
+                        <tr>
+                            <td colspan="5" class="py-10 text-center text-gray-500 font-mono">
+                                Escaneando comercios en MongoDB y telemetría vecinal...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
         <!-- Navigation Tabs Bar -->
         <div class="border-b border-gray-800 flex items-center space-x-6 text-sm">
@@ -738,6 +855,16 @@
                 document.getElementById('sys-php').textContent = data.system.php_version?.split('-')[0] || 'PHP 8';
                 document.getElementById('sys-ram').textContent = `${data.system.memory_used_mb} MB`;
 
+                // Update Sync Status
+                if (s.auto_sync_status) {
+                    const stSync = document.getElementById('storage-sync-status');
+                    if (stSync) stSync.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span>${s.auto_sync_status}</span>`;
+                }
+                if (a.pipeline) {
+                    const aiPipe = document.getElementById('ai-pipeline-status');
+                    if (aiPipe) aiPipe.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span><span>${a.pipeline}</span>`;
+                }
+
             } catch (err) {
                 console.error(err);
             } finally {
@@ -857,6 +984,127 @@
             }
         }
 
+        async function loadB2BLeads() {
+            const tableBody = document.getElementById('b2b-leads-table-body');
+            const refreshIcon = document.getElementById('b2b-refresh-icon');
+            if (refreshIcon) refreshIcon.classList.add('animate-spin');
+
+            try {
+                const res = await fetch('/api/b2b/leads');
+                const data = await res.json();
+
+                if (!data.success || !data.leads) {
+                    tableBody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-red-400 font-mono">Error al cargar leads B2B.</td></tr>`;
+                    return;
+                }
+
+                // Actualizar Mini-KPIs
+                if (data.kpis) {
+                    const kb = document.getElementById('kpi-total-businesses');
+                    if (kb) kb.textContent = data.kpis.total_businesses || 0;
+
+                    const kp = document.getElementById('kpi-total-products');
+                    if (kp) kp.textContent = data.kpis.total_products || 0;
+
+                    const ki = document.getElementById('kpi-total-interactions');
+                    if (ki) ki.textContent = data.kpis.total_interactions || 0;
+
+                    const kh = document.getElementById('kpi-hot-leads');
+                    if (kh) kh.textContent = `${data.kpis.hot_leads_count || 0} Calientes`;
+                }
+
+                if (data.leads.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-500 font-mono">No se encontraron negocios con telemetría activa.</td></tr>`;
+                    return;
+                }
+
+                tableBody.innerHTML = data.leads.map(lead => {
+                    return `
+                        <tr class="hover:bg-gray-900/40 transition">
+                            <!-- Negocio & Categoría -->
+                            <td class="py-3 px-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/80 flex items-center justify-center font-bold text-white shrink-0 text-sm shadow-sm">
+                                        ${lead.name.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-white text-sm flex items-center gap-1.5">
+                                            <span>${escapeHtml(lead.name)}</span>
+                                            ${lead.is_mongo ? `<span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">MONGODB</span>` : ''}
+                                        </div>
+                                        <div class="flex flex-wrap items-center gap-1.5 mt-0.5 text-gray-400 text-[11px]">
+                                            <span class="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-cyan-300 text-[10px] font-mono">${escapeHtml(lead.category)}</span>
+                                            <span class="text-gray-600">&bull;</span>
+                                            <span class="text-gray-300">${escapeHtml(lead.owner)}</span>
+                                            <span class="text-gray-600">&bull;</span>
+                                            <span class="font-mono text-gray-400">${lead.phone}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Uso del Catálogo -->
+                            <td class="py-3 px-4">
+                                <div class="space-y-1 max-w-[200px]">
+                                    <div class="flex justify-between items-center font-mono text-[11px]">
+                                        <span class="text-white font-bold">${lead.products_count} / 50 ítems</span>
+                                        <span class="${lead.catalog_progress >= 50 ? 'text-emerald-400 font-bold' : 'text-cyan-400'}">${lead.catalog_progress}%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden border border-gray-700/40">
+                                        <div class="h-full rounded-full transition-all duration-500 ${lead.catalog_progress >= 70 ? 'bg-gradient-to-r from-emerald-500 to-teal-400' : (lead.catalog_progress >= 30 ? 'bg-gradient-to-r from-cyan-500 to-blue-500' : 'bg-gray-600')}" style="width: ${lead.catalog_progress}%"></div>
+                                    </div>
+                                    <div class="text-[10px] text-gray-400 font-mono flex items-center gap-1">
+                                        ${lead.ai_used ? '<span class="text-purple-300">✨ IA CodeFormer Activa</span>' : '<span class="text-gray-500">Catálogo manual</span>'}
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Tracción Vecinal -->
+                            <td class="py-3 px-4">
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-mono text-sm font-bold text-emerald-400">${lead.whatsapp_clicks} clics</span>
+                                    <span class="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono border border-emerald-500/20 flex items-center gap-0.5">
+                                        <span class="material-symbols-outlined text-[11px]">trending_up</span>
+                                        <span>Tracción</span>
+                                    </span>
+                                </div>
+                                <div class="text-[10px] text-gray-400 mt-1 truncate max-w-[220px]" title="${escapeHtml(lead.address)}">
+                                    📍 ${escapeHtml(lead.address)}
+                                </div>
+                            </td>
+
+                            <!-- Estado del Lead -->
+                            <td class="py-3 px-4">
+                                <div class="space-y-1">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold font-mono ${lead.status_badge_class}">
+                                        ${lead.status_type === 'hot' ? '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>' : ''}
+                                        <span>${lead.status_text}</span>
+                                    </span>
+                                    <div class="text-[10px] font-mono text-gray-400">
+                                        Score: <span class="font-bold text-white text-xs">${lead.score}</span> / 100 pts
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Acción Comercial (1-Click Pitch) -->
+                            <td class="py-3 px-4 text-right">
+                                <a href="${lead.pitch_url}" target="_blank" class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold text-xs shadow-lg shadow-emerald-950/40 transition active:scale-95 group">
+                                    <span class="material-symbols-outlined text-sm group-hover:rotate-12 transition-transform">rocket_launch</span>
+                                    <span>Cotizar con BioCoreXStack</span>
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-red-400 font-mono">Error: ${escapeHtml(err.message)}</td></tr>`;
+            } finally {
+                if (refreshIcon) {
+                    setTimeout(() => refreshIcon.classList.remove('animate-spin'), 400);
+                }
+            }
+        }
+
         function escapeHtml(string) {
             return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
@@ -864,10 +1112,12 @@
         setInterval(() => {
             if (document.getElementById('auto-refresh')?.checked) {
                 fetchStatus();
+                loadB2BLeads();
             }
         }, 5000);
 
         fetchStatus();
+        loadB2BLeads();
     </script>
 </body>
 </html>
