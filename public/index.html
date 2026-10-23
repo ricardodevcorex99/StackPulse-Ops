@@ -1116,12 +1116,19 @@
             return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
-        setInterval(() => {
-            if (document.getElementById('auto-refresh')?.checked) {
-                fetchStatus();
-                loadB2BLeads();
+        let isRefreshingCycle = false;
+        async function runAutoCycle() {
+            if (isRefreshingCycle || !document.getElementById('auto-refresh')?.checked) return;
+            isRefreshingCycle = true;
+            try {
+                await Promise.allSettled([fetchStatus(), loadB2BLeads()]);
+            } catch (_) {}
+            finally {
+                isRefreshingCycle = false;
             }
-        }, 5000);
+        }
+
+        setInterval(runAutoCycle, 5000);
 
         fetchStatus();
         loadB2BLeads();
